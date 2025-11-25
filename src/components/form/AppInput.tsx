@@ -12,7 +12,7 @@ export interface AppInputProps {
   style?: any;              // caso queira customizar depois
 }
 
-export default function AppInput({
+export default function AAppInput({
   label,
   value,
   onChangeText,

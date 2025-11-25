@@ -6,13 +6,14 @@ import { loginUser, registerUser } from "./authService";
 interface User {
   id: number;
   email: string;
+  name: string;
 }
 
 interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (email: string, password: string) => Promise<void>;
+  register: (email: string, password: string, name: string) => Promise<void>;
   logout: () => Promise<void>;
 }
 
@@ -38,18 +39,18 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function login(email: string, password: string) {
     const loggedUser = await loginUser(email, password);
 
-    // Garantir que volte exatamente no formato correto
     const formattedUser: User = {
       id: loggedUser.id,
       email: loggedUser.email,
+      name: loggedUser.name,
     };
 
     await AsyncStorage.setItem("user", JSON.stringify(formattedUser));
     setUser(formattedUser);
   }
 
-  async function register(email: string, password: string) {
-    await registerUser(email, password);
+  async function register(name: string, email: string, password: string) {
+    await registerUser(name, email, password);
   }
 
   async function logout() {

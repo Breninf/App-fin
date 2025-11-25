@@ -1,52 +1,33 @@
-import { View, Text, StyleSheet } from "react-native";
-import { Button } from "react-native-paper";
+// src/screens/home/HomeScreen.tsx
+import { View, FlatList } from "react-native";
 import { useAuth } from "../../auth/authContext";
+import HeaderHome from "./components/HeaderHome";
+import BalanceCard from "./components/BalanceCard";
+import ExpenseItem from "./components/ExpenseItem";
+import IncomeItem from "./components/IncomeItem";
+import useHomeData from "./hooks/useHomeData";
+import { styles } from "./styles";
 
 export default function HomeScreen() {
   const { user, logout } = useAuth();
+  const { balance, incomes, expenses } = useHomeData();
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Home - Autenticação OK! 🎉</Text>
+      <HeaderHome username={user?.name || "Usuário"} onLogout={logout} />
 
-      <Text style={styles.info}>Usuário logado:</Text>
-      <Text style={styles.email}>{user?.email}</Text>
-      <Text style={styles.id}>ID: {user?.id}</Text>
+      <BalanceCard balance={balance} />
 
-      <Button
-        mode="contained"
-        onPress={logout}
-        style={{ marginTop: 20 }}
-      >
-        Sair
-      </Button>
+      <FlatList
+        ListHeaderComponent={() => (
+          <>
+            <IncomeItem amount={incomes} />
+            <ExpenseItem amount={expenses} />
+          </>
+        )}
+        data={[]} // por enquanto vazio até integrar transações reais
+        renderItem={() => null}
+      />
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: 20,
-  },
-  title: {
-    fontSize: 26,
-    fontWeight: "bold",
-    marginBottom: 20,
-  },
-  info: {
-    fontSize: 18,
-    marginTop: 10,
-  },
-  email: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginTop: 5,
-  },
-  id: {
-    marginTop: 5,
-    color: "#555",
-  },
-});

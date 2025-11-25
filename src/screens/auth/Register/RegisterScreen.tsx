@@ -14,13 +14,16 @@ import { AuthStackParamList } from "../../../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../../auth/authContext";
 
-type RegisterScreenProp = NativeStackNavigationProp<AuthStackParamList, "Register">;
+type RegisterScreenProp = NativeStackNavigationProp<
+  AuthStackParamList,
+  "Register"
+>;
 
 export default function RegisterScreen() {
   const navigation = useNavigation<RegisterScreenProp>();
-
   const { register } = useAuth();
 
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -32,7 +35,8 @@ export default function RegisterScreen() {
         return;
       }
 
-      await register(email, password);
+      // 👉 Agora passando os argumentos NA ORDEM CORRETA
+      await register(name, email, password);
 
       alert("Conta criada com sucesso!");
       navigation.navigate("Login");
@@ -49,6 +53,13 @@ export default function RegisterScreen() {
       extraScrollHeight={Platform.OS === "ios" ? 20 : 30}
     >
       <Text style={styles.title}>Criar Conta</Text>
+
+      <AppInput
+        label="Nome"
+        value={name}
+        onChangeText={setName}
+        icon="account"
+      />
 
       <AppInput
         label="Email"

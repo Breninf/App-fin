@@ -1,53 +1,49 @@
-// src/auth/authService.ts
 import { db } from "./db";
 
 export interface DBUser {
   id: number;
   email: string;
   password: string;
+  name: string;
 }
 
 /**
- * Registra usuário (lança erro se o INSERT falhar, p.ex. UNIQUE constraint)
+ * Registra usuário
  */
-export async function registerUser(email: string, password: string): Promise<void> {
+export async function registerUser(
+  name: string,
+  email: string,
+  password: string
+): Promise<void> {
   await db.runAsync(
-    "INSERT INTO users (email, password) VALUES (?, ?)",
-    [email, password]
+    "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+    [name, email, password]
   );
 }
 
 /**
- * Faz login: retorna um objeto DBUser garantido (faz checagens em runtime).
- * Lança Error se usuário não encontrado.
+ * Login
  */
-export async function loginUser(email: string, password: string): Promise<DBUser> {
+export async function loginUser(
+  email: string,
+  password: string
+): Promise<DBUser> {
   const row = await db.getFirstAsync(
     "SELECT * FROM users WHERE email = ? AND password = ?",
     [email, password]
   );
 
-  // validação em runtime - protege contra retornos inesperados do DB
-  if (!row || typeof row !== "object") {
+  if (!row) {
     throw new Error("Email ou senha inválidos");
   }
 
-  // cast seguro: usamos (row as any) para acessar campos dinâmicos vindos do DB,
-  // mas validamos a existência antes de montar o objeto final.
-  const r = row as any;
-
-  const id = r.id ?? r.ID ?? r._id; // tenta algumas variações caso existam
-  const emailVal = r.email ?? r.Email ?? r.email_address;
-  const passwordVal = r.password ?? r.pass ?? r.senha ?? "";
-
-  if (id == null || emailVal == null) {
-    throw new Error("Email ou senha inválidos");
-  }
+  const r = row as Record<string, any>;
 
   const user: DBUser = {
-    id: Number(id),
-    email: String(emailVal),
-    password: String(passwordVal),
+    id: Number(r.id),
+    email: String(r.email),
+    password: String(r.password),
+    name: String(r.name),
   };
 
   return user;
