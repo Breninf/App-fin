@@ -2,4 +2,7 @@
 export type AuthStackParamList = {
   Login: undefined;      // Tela de login, sem parâmetros
   Register: undefined;   // Tela de registro, sem parâmetros
+  Chart: undefined;
+  Add: undefined;
+  Profile: undefined;
 };
