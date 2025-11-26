@@ -10,7 +10,7 @@ interface Props {
 export default function HeaderHome({ username, onLogout }: Props) {
   return (
     <View style={styles.header}>
-      <Text style={styles.headerText}>Olá, {username} 👋</Text>
+      <Text style={styles.headerText}>Olá, {username }👋</Text>
 
       <TouchableOpacity onPress={onLogout}>
         <Text style={styles.logout}>Sair</Text>

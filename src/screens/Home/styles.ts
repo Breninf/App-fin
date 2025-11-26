@@ -4,9 +4,11 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
+    paddingHorizontal: 20, // apenas laterais
+    paddingTop: 45, // topo bem menor
     backgroundColor: "#fff",
   },
+
   header: {
     flexDirection: "row",
     justifyContent: "space-between",

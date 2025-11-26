@@ -14,7 +14,7 @@ export default function AppTabs() {
   const navigation = useNavigation<any>();
 
   return (
-    <>
+    <View style={{ flex: 1 }} pointerEvents="box-none">
       <Tab.Navigator
         screenOptions={{
           headerShown: false,
@@ -64,29 +64,28 @@ export default function AppTabs() {
         />
       </Tab.Navigator>
 
-      {/* Botão flutuante */}
       <TouchableOpacity
         onPress={() => navigation.navigate("Add")}
         style={styles.fab}
       >
         <Ionicons name="add" size={32} color="#FFF" />
       </TouchableOpacity>
-    </>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   fab: {
     position: "absolute",
-    bottom: 145,
+    bottom: 145, // altura ideal para Android
     alignSelf: "center",
     backgroundColor: "#4CAF50",
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 64,
+    height: 64,
+    borderRadius: 32,
     justifyContent: "center",
     alignItems: "center",
-    elevation: 5,
+    elevation: 6,
+    zIndex: 999,
   },
-  
 });
