@@ -7,6 +7,18 @@ export interface DBUser {
   name: string;
 }
 
+// NOVAS DEFINIÇÕES DE TIPOS
+export type TransactionType = "income" | "expense";
+
+export interface Transaction {
+  id: number;
+  user_id: number;
+  type: TransactionType;
+  description: string;
+  amount: number;
+  date: string;
+}
+
 /**
  * Registra usuário
  */
@@ -49,21 +61,7 @@ export async function loginUser(
   return user;
 }
 
-// src/auth/authService.ts
-
-// ... (existing DBUser interface and registerUser/loginUser functions)
-
-export type TransactionType = "income" | "expense";
-
-export interface Transaction {
-  id: number;
-  user_id: number;
-  type: TransactionType;
-  description: string;
-  amount: number;
-  date: string;
-}
-
+// FUNÇÕES DE TRANSAÇÕES
 /**
  * Adiciona uma nova transação (receita ou despesa)
  */
@@ -108,4 +106,30 @@ export async function fetchMonthlyTransactions(
     amount: Number(row.amount),
     date: String(row.date),
   }));
+}
+
+/**
+ * Deleta o usuário e todas as suas transações.
+ */
+export async function deleteUser(userId: number): Promise<void> {
+  // Inicia uma transação para garantir que ambas as operações sejam atômicas
+  await db.execAsync("BEGIN TRANSACTION;");
+  try {
+    // 1. Deleta todas as transações do usuário
+    await db.runAsync("DELETE FROM transactions WHERE user_id = ?", [userId]);
+    
+    // 2. Deleta o usuário
+    const result = await db.runAsync("DELETE FROM users WHERE id = ?", [userId]);
+    
+    if (result.changes === 0) {
+        throw new Error("Usuário não encontrado.");
+    }
+    
+    // Confirma a transação
+    await db.execAsync("COMMIT;");
+  } catch (error) {
+    // Reverte a transação em caso de erro
+    await db.execAsync("ROLLBACK;");
+    throw new Error(`Falha ao apagar a conta: ${error instanceof Error ? error.message : String(error)}`);
+  }
 }

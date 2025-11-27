@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { initDB } from "./db";
-import { loginUser, registerUser, addTransaction as addTransactionService, TransactionType } from "./authService";
+import { loginUser, registerUser, addTransaction as addTransactionService, TransactionType, deleteUser } from "./authService";
 
 interface User {
   id: number;
@@ -15,7 +15,8 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<void>;
   register: (name: string, email: string, password: string) => Promise<void>; 
   logout: () => Promise<void>;
-  addTransaction: (type: TransactionType, description: string, amount: number) => Promise<void>; 
+  addTransaction: (type: TransactionType, description: string, amount: number) => Promise<void>;
+  deleteAccount: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
@@ -49,7 +50,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setLoading(true);
     try {
       const loggedUser = await loginUser(email, password);
-      // Certifique-se de que o objeto a ser armazenado só tenha os campos necessários
       const userToStore: User = { id: loggedUser.id, email: loggedUser.email, name: loggedUser.name };
       setUser(userToStore);
       await AsyncStorage.setItem("@user", JSON.stringify(userToStore));
@@ -65,7 +65,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   async function register(name: string, email: string, password: string) {
     try {
       await registerUser(name, email, password);
-      // Após o registro bem-sucedido, pode-se logar ou apenas direcionar para a tela de Login.
     } catch (error) {
       alert("Erro ao registrar. O email pode já estar em uso.");
       throw error;
@@ -78,7 +77,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await AsyncStorage.removeItem("@user");
   }
 
-  // 6. Função de Adicionar Transação (Adicionada na resposta anterior)
+  // 6. Função de Adicionar Transação
   async function addTransaction(
     type: TransactionType,
     description: string,
@@ -90,8 +89,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     await addTransactionService(user.id, type, description, amount); 
   }
 
+  // 7. Função: Apagar Conta
+  async function deleteAccount() {
+    if (!user) {
+      throw new Error("Nenhuma conta logada para apagar.");
+    }
+    const userId = user.id;
+    
+    try {
+        await deleteUser(userId);
+        // Garante que o estado da UI seja atualizado após a exclusão do DB
+        await logout(); 
+    } catch (error) {
+        console.error("Erro ao apagar conta:", error);
+        throw error;
+    }
+  }
+
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, addTransaction }}>
+    <AuthContext.Provider value={{ user, loading, login, register, logout, addTransaction, deleteAccount }}>
       {children}
     </AuthContext.Provider>
   );

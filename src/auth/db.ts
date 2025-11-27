@@ -12,7 +12,7 @@ export function initDB() {
       email TEXT UNIQUE NOT NULL,
       password TEXT NOT NULL
     );
-    -- NOVA TABELA: transactions
+   NOVA TABELA: transactions
     CREATE TABLE IF NOT EXISTS transactions (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       user_id INTEGER NOT NULL,
