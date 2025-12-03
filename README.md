@@ -92,11 +92,11 @@ As tabelas criadas incluem: **users** (dados de autenticação / perfil) e **tra
 
  **Breno Felipe** – [@Breninf](https://github.com/Breninf)
  **Celton Roberto** – [@Celton14](https://github.com/Celton14)
- **Raryane Oliveira** – [@Celton14](https://github.com/Celton14)
- **Victor Morais** – [@yraryy](https://github.com/yraryy)
+ **Raryane Oliveira** – [@yraryy](https://github.com/yraryy)
+ **Victor Morais** – [@victormorais314-ofc](https://github.com/victormorais314-ofc)
 
 
 
 ## 📄 Licença
 
-Projeto de uso educacional.
+Projeto de uso ducacional.
