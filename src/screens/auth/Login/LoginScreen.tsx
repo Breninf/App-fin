@@ -15,7 +15,7 @@ import { AuthStackParamList } from "../../../navigation/types";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { useAuth } from "../../../auth/authContext";
 
-const logo = require("../../../assets/logo.png");
+const logo = require("../../../assets/LogoAppFin.jpg");
 
 // Tipagem da navigation
 type LoginScreenProp = NativeStackNavigationProp<AuthStackParamList, "Login">;
@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     height: 125,
     marginBottom: 16,
     alignSelf: "center",
+    borderRadius: 10,
   },
   welcomeText: {
     fontSize: 24,
