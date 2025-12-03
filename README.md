@@ -90,10 +90,10 @@ As tabelas criadas incluem: **users** (dados de autenticação / perfil) e **tra
 
 ## 🧑‍💻 Equipe do Projeto
 
- **Breno Felipe** – [@Breninf](https://github.com/Breninf)
- **Celton Roberto** – [@Celton14](https://github.com/Celton14)
- **Raryane Oliveira** – [@yraryy](https://github.com/yraryy)
- **Victor Morais** – [@victormorais314-ofc](https://github.com/victormorais314-ofc)
+- **Breno Felipe** – [@Breninf](https://github.com/Breninf)
+- **Celton Roberto** – [@Celton14](https://github.com/Celton14)
+- **Raryane Oliveira** – [@yraryy](https://github.com/yraryy)
+- **Victor Morais** – [@victormorais314-ofc](https://github.com/victormorais314-ofc)
 
 
 
