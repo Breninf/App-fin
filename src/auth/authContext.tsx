@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { initDB } from "./db";
-import { loginUser, registerUser, addTransaction as addTransactionService, TransactionType, deleteUser } from "./authService";
+import { initDB } from "./repository";
+import {
+  loginUser,
+  registerUser,
+  addTransaction as addTransactionService,
+  TransactionType,
+  deleteUser,
+} from "./authService";
 
 interface User {
   id: number;
@@ -13,9 +19,13 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  register: (name: string, email: string, password: string) => Promise<void>; 
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
-  addTransaction: (type: TransactionType, description: string, amount: number) => Promise<void>;
+  addTransaction: (
+    type: TransactionType,
+    description: string,
+    amount: number
+  ) => Promise<void>;
   deleteAccount: () => Promise<void>;
 }
 
@@ -44,13 +54,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
     }
   };
-  
+
   // 3. Função de Login
   async function login(email: string, password: string) {
     setLoading(true);
     try {
       const loggedUser = await loginUser(email, password);
-      const userToStore: User = { id: loggedUser.id, email: loggedUser.email, name: loggedUser.name };
+      const userToStore: User = {
+        id: loggedUser.id,
+        email: loggedUser.email,
+        name: loggedUser.name,
+      };
       setUser(userToStore);
       await AsyncStorage.setItem("@user", JSON.stringify(userToStore));
     } catch (error) {
@@ -86,7 +100,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (!user) {
       throw new Error("Usuário não autenticado.");
     }
-    await addTransactionService(user.id, type, description, amount); 
+    await addTransactionService(user.id, type, description, amount);
   }
 
   // 7. Função: Apagar Conta
@@ -95,19 +109,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error("Nenhuma conta logada para apagar.");
     }
     const userId = user.id;
-    
+
     try {
-        await deleteUser(userId);
-        // Garante que o estado da UI seja atualizado após a exclusão do DB
-        await logout(); 
+      await deleteUser(userId);
+      // Garante que o estado da UI seja atualizado após a exclusão do DB
+      await logout();
     } catch (error) {
-        console.error("Erro ao apagar conta:", error);
-        throw error;
+      console.error("Erro ao apagar conta:", error);
+      throw error;
     }
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, register, logout, addTransaction, deleteAccount }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        login,
+        register,
+        logout,
+        addTransaction,
+        deleteAccount,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

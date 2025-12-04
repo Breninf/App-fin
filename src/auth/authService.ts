@@ -1,4 +1,4 @@
-import { db } from "./db";
+import { db } from "./repository";
 
 export interface DBUser {
   id: number;
@@ -88,7 +88,7 @@ export async function fetchMonthlyTransactions(
   const year = now.getFullYear();
   const month = now.getMonth() + 1; // Mês é 0-indexado
   const monthStr = month < 10 ? `0${month}` : `${month}`;
-  
+
   // Filtra por ano e mês (ex: 2025-11-%)
   const startDate = `${year}-${monthStr}-01`;
   const endDate = `${year}-${monthStr}-31`;
@@ -117,19 +117,25 @@ export async function deleteUser(userId: number): Promise<void> {
   try {
     // 1. Deleta todas as transações do usuário
     await db.runAsync("DELETE FROM transactions WHERE user_id = ?", [userId]);
-    
+
     // 2. Deleta o usuário
-    const result = await db.runAsync("DELETE FROM users WHERE id = ?", [userId]);
-    
+    const result = await db.runAsync("DELETE FROM users WHERE id = ?", [
+      userId,
+    ]);
+
     if (result.changes === 0) {
-        throw new Error("Usuário não encontrado.");
+      throw new Error("Usuário não encontrado.");
     }
-    
+
     // Confirma a transação
     await db.execAsync("COMMIT;");
   } catch (error) {
     // Reverte a transação em caso de erro
     await db.execAsync("ROLLBACK;");
-    throw new Error(`Falha ao apagar a conta: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Falha ao apagar a conta: ${
+        error instanceof Error ? error.message : String(error)
+      }`
+    );
   }
 }
